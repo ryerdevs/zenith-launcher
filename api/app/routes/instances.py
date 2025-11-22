@@ -38,7 +38,6 @@ def update_instance():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-# --- RUTA DE INSTALACIÓN (Faltaba esta) ---
 @instances_bp.route('/install', methods=['POST'])
 def install_instance_only():
     try:
@@ -53,11 +52,9 @@ def install_instance_only():
         if not json_path.exists():
             return jsonify({"status": "error", "message": "Instancia no encontrada"}), 404
 
-        # Leer configuración para saber qué descargar
         with open(json_path, "r", encoding='utf-8') as f:
             config = json.load(f)
 
-        # Ejecutar instalación en segundo plano (Daemon Thread)
         threading.Thread(
             target=install_task,
             args=(
@@ -77,7 +74,6 @@ def install_instance_only():
 
 @instances_bp.route('/image/<instance_id>/<filename>')
 def get_instance_image(instance_id, filename):
-    """Sirve la imagen local de la instancia"""
     try:
         return send_from_directory(INSTANCES_DIR / instance_id, filename)
     except:
@@ -93,5 +89,85 @@ def delete_instance_endpoint():
             
         instance_manager.delete_instance(instance_id)
         return jsonify({"status": "success", "message": "Instancia eliminada"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@instances_bp.route('/import-modpack', methods=['POST'])
+def import_modpack():
+    try:
+        if 'file' not in request.files:
+            return jsonify({"status": "error", "message": "No se envió ningún archivo"}), 400
+            
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({"status": "error", "message": "Nombre de archivo vacío"}), 400
+
+        if not file.filename.endswith('.zip'):
+            return jsonify({"status": "error", "message": "El archivo debe ser un ZIP"}), 400
+
+        import tempfile
+        import os
+        
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".zip") as temp_zip:
+            file.save(temp_zip.name)
+            temp_zip_path = temp_zip.name
+            
+        try:
+            result = instance_manager.import_modpack(temp_zip_path, file.filename)
+            return jsonify({"status": "success", **result})
+        finally:
+            if os.path.exists(temp_zip_path):
+                os.remove(temp_zip_path)
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@instances_bp.route('/<instance_id>/mods', methods=['GET'])
+def get_instance_mods(instance_id):
+    try:
+        mods = instance_manager.get_mods(instance_id)
+        return jsonify(mods)
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@instances_bp.route('/<instance_id>/resourcepacks', methods=['GET'])
+def get_instance_resourcepacks(instance_id):
+    try:
+        packs = instance_manager.get_resourcepacks(instance_id)
+        return jsonify(packs)
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@instances_bp.route('/<instance_id>/shaderpacks', methods=['GET'])
+def get_instance_shaderpacks(instance_id):
+    try:
+        packs = instance_manager.get_shaderpacks(instance_id)
+        return jsonify(packs)
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@instances_bp.route('/<instance_id>/datapacks', methods=['GET'])
+def get_instance_datapacks(instance_id):
+    try:
+        packs = instance_manager.get_datapacks(instance_id)
+        return jsonify(packs)
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@instances_bp.route('/<instance_id>/worlds', methods=['GET'])
+def get_instance_worlds(instance_id):
+    try:
+        worlds = instance_manager.get_worlds(instance_id)
+        return jsonify(worlds)
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@instances_bp.route('/<instance_id>/open-folder', methods=['POST'])
+def open_instance_folder(instance_id):
+    try:
+        if instance_manager.open_folder(instance_id):
+            return jsonify({"status": "success", "message": "Carpeta abierta"})
+        else:
+            return jsonify({"status": "error", "message": "Carpeta no encontrada"}), 404
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500

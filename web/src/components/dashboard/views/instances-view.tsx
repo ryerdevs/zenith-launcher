@@ -2,14 +2,16 @@ import { useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Plus, HardDrive, RefreshCw, Settings, PlayCircle, Box, Trash2 } from 'lucide-react'
+import { Plus, HardDrive, RefreshCw, Settings, PlayCircle, Box, Trash2, Download } from 'lucide-react'
 import { 
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle 
 } from "@/components/ui/alert-dialog"
 import { useLauncher } from '@/lib/state'
 import { api } from '@/lib/api'
 import { CreateInstanceDialog } from '../dialogs/create-instance-dialog'
-import { EditInstanceDialog } from '../dialogs/edit-instance-dialog'
+import { InstanceDetailsDialog } from '../dialogs/instance-details-dialog'
+import { ImportModpackDialog } from '../dialogs/import-modpack-dialog'
+import { InstanceDashboard } from '../instance-dashboard'
 import { cn } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
 
@@ -18,8 +20,10 @@ export function InstancesView() {
     const { toast } = useToast()
     
     const [showCreate, setShowCreate] = useState(false)
-    const [editingId, setEditingId] = useState<string | null>(null)
-    const [deletingId, setDeletingId] = useState<string | null>(null) // ID para confirmar borrado
+    const [showImport, setShowImport] = useState(false)
+    const [detailsId, setDetailsId] = useState<string | null>(null)
+    const [deletingId, setDeletingId] = useState<string | null>(null)
+    const [viewingInstanceId, setViewingInstanceId] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
 
     const loadInstances = async () => {
@@ -44,7 +48,6 @@ export function InstancesView() {
                 variant: "destructive"
             })
             
-            // Si la instancia borrada estaba seleccionada, deseleccionar
             if (selectedInstanceName === deletingId) {
                 setSelectedInstanceName(null)
             }
@@ -59,6 +62,22 @@ export function InstancesView() {
 
     useEffect(() => { loadInstances() }, [])
 
+    // --- VISTA DASHBOARD ---
+    if (viewingInstanceId) {
+        const instance = instances.find(i => i.id === viewingInstanceId)
+        if (instance) {
+            return (
+                <div className="p-8 h-full">
+                    <InstanceDashboard 
+                        instance={instance} 
+                        onBack={() => setViewingInstanceId(null)} 
+                    />
+                </div>
+            )
+        }
+    }
+
+    // --- VISTA GRID ---
     return (
         <div className="p-8 pb-24 animate-in fade-in duration-500">
             
@@ -75,6 +94,9 @@ export function InstancesView() {
                     <Button variant="ghost" size="icon" onClick={loadInstances} disabled={loading} className="hover:bg-muted">
                         <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                     </Button>
+                    <Button variant="outline" onClick={() => setShowImport(true)} className="gap-2">
+                        <Download className="h-4 w-4" /> Importar ZIP
+                    </Button>
                     <Button onClick={() => setShowCreate(true)} className="gap-2 shadow-lg shadow-primary/20">
                         <Plus className="h-4 w-4" /> Crear Instancia
                     </Button>
@@ -89,7 +111,7 @@ export function InstancesView() {
                     return (
                         <Card 
                             key={inst.id}
-                            onClick={() => setSelectedInstanceName(inst.id)}
+                            onClick={() => setViewingInstanceId(inst.id)}
                             className={cn(
                                 "group relative h-[320px] overflow-hidden border-0 cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1",
                                 isSelected ? "ring-4 ring-primary shadow-primary/20" : "ring-1 ring-border hover:ring-primary/50"
@@ -116,7 +138,7 @@ export function InstancesView() {
                                     )}
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        setEditingId(inst.id);
+                                        setDetailsId(inst.id);
                                     }}
                                     title="Configurar"
                                 >
@@ -184,25 +206,12 @@ export function InstancesView() {
                         </Card>
                     )
                 })}
-                
-                {/* TARJETA "CREAR NUEVA" */}
-                <Card 
-                    onClick={() => setShowCreate(true)}
-                    className="group relative h-[320px] border-2 border-dashed border-muted-foreground/20 bg-transparent hover:bg-muted/5 hover:border-primary/50 cursor-pointer flex flex-col items-center justify-center gap-4 transition-all text-muted-foreground hover:text-primary"
-                >
-                    <div className="p-4 rounded-full bg-muted group-hover:bg-primary/10 transition-colors">
-                        <Plus className="h-8 w-8" />
-                    </div>
-                    <div className="text-center">
-                        <h3 className="font-bold text-lg">Crear Nueva</h3>
-                        <p className="text-xs opacity-70">Añade otra versión</p>
-                    </div>
-                </Card>
             </div>
 
             {/* DIÁLOGOS */}
             <CreateInstanceDialog open={showCreate} onOpenChange={setShowCreate} onSuccess={loadInstances} />
-            <EditInstanceDialog isOpen={!!editingId} instanceId={editingId} onClose={() => setEditingId(null)} onSuccess={loadInstances} />
+            <ImportModpackDialog open={showImport} onOpenChange={setShowImport} onSuccess={loadInstances} />
+            <InstanceDetailsDialog isOpen={!!detailsId} instanceId={detailsId} onClose={() => setDetailsId(null)} onSuccess={loadInstances} />
 
             {/* CONFIRMACIÓN DE BORRADO */}
             <AlertDialog open={!!deletingId} onOpenChange={() => setDeletingId(null)}>
