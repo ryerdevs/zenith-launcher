@@ -1,0 +1,4 @@
+flask
+flask-cors
+minecraft-launcher-lib
+requests

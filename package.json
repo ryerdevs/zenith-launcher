@@ -1,0 +1,15 @@
+{
+  "name": "minelauncher-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:tauri\"",
+    "dev:api": "python api/main.py --dev", 
+    "dev:tauri": "tauri dev",
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
+    "concurrently": "^9.0.0"
+  }
+}
