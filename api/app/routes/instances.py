@@ -2,20 +2,25 @@ from flask import Blueprint, request, jsonify, send_from_directory, abort
 import threading
 import json
 from app.config import INSTANCES_DIR
-from app.services.instance_manager import instance_manager
+from app.services.instances import (
+    instance_service,
+    content_service,
+    modpack_service,
+    file_system_service
+)
 from app.services.installer import install_task
 
 instances_bp = Blueprint('instances', __name__)
 
 @instances_bp.route('/list', methods=['GET'])
 def list_instances():
-    return jsonify(instance_manager.list_instances())
+    return jsonify(instance_service.list_instances())
 
 @instances_bp.route('/create', methods=['POST'])
 def create_instance():
     try:
         data = request.json
-        result = instance_manager.create_instance(
+        result = instance_service.create_instance(
             data.get('name'),
             data.get('version'),
             data.get('loader', 'Vanilla'),
@@ -33,7 +38,7 @@ def update_instance():
         if not data.get('id'):
             return jsonify({"status": "error", "message": "Falta ID"}), 400
         
-        instance_manager.update_instance(data['id'], data)
+        instance_service.update_instance(data['id'], data)
         return jsonify({"status": "success", "message": "Instancia actualizada"})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
@@ -87,7 +92,7 @@ def delete_instance_endpoint():
         if not instance_id:
             return jsonify({"status": "error", "message": "Falta ID"}), 400
             
-        instance_manager.delete_instance(instance_id)
+        instance_service.delete_instance(instance_id)
         return jsonify({"status": "success", "message": "Instancia eliminada"})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
@@ -113,7 +118,7 @@ def import_modpack():
             temp_zip_path = temp_zip.name
             
         try:
-            result = instance_manager.import_modpack(temp_zip_path, file.filename)
+            result = modpack_service.import_modpack(temp_zip_path, file.filename)
             return jsonify({"status": "success", **result})
         finally:
             if os.path.exists(temp_zip_path):
@@ -125,7 +130,7 @@ def import_modpack():
 @instances_bp.route('/<instance_id>/mods', methods=['GET'])
 def get_instance_mods(instance_id):
     try:
-        mods = instance_manager.get_mods(instance_id)
+        mods = content_service.get_mods(instance_id)
         return jsonify(mods)
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
@@ -133,7 +138,7 @@ def get_instance_mods(instance_id):
 @instances_bp.route('/<instance_id>/resourcepacks', methods=['GET'])
 def get_instance_resourcepacks(instance_id):
     try:
-        packs = instance_manager.get_resourcepacks(instance_id)
+        packs = content_service.get_resourcepacks(instance_id)
         return jsonify(packs)
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
@@ -141,7 +146,7 @@ def get_instance_resourcepacks(instance_id):
 @instances_bp.route('/<instance_id>/shaderpacks', methods=['GET'])
 def get_instance_shaderpacks(instance_id):
     try:
-        packs = instance_manager.get_shaderpacks(instance_id)
+        packs = content_service.get_shaderpacks(instance_id)
         return jsonify(packs)
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
@@ -149,7 +154,7 @@ def get_instance_shaderpacks(instance_id):
 @instances_bp.route('/<instance_id>/datapacks', methods=['GET'])
 def get_instance_datapacks(instance_id):
     try:
-        packs = instance_manager.get_datapacks(instance_id)
+        packs = content_service.get_datapacks(instance_id)
         return jsonify(packs)
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
@@ -157,7 +162,7 @@ def get_instance_datapacks(instance_id):
 @instances_bp.route('/<instance_id>/worlds', methods=['GET'])
 def get_instance_worlds(instance_id):
     try:
-        worlds = instance_manager.get_worlds(instance_id)
+        worlds = content_service.get_worlds(instance_id)
         return jsonify(worlds)
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
@@ -165,7 +170,7 @@ def get_instance_worlds(instance_id):
 @instances_bp.route('/<instance_id>/open-folder', methods=['POST'])
 def open_instance_folder(instance_id):
     try:
-        if instance_manager.open_folder(instance_id):
+        if file_system_service.open_folder(instance_id):
             return jsonify({"status": "success", "message": "Carpeta abierta"})
         else:
             return jsonify({"status": "error", "message": "Carpeta no encontrada"}), 404

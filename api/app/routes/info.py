@@ -79,8 +79,10 @@ def api_get_loaders():
             loaders = [v["loader"]["version"] for v in r]
         
         elif loader_type == 'Forge':
-            fv = mclib.forge.find_forge_version(mc_version)
-            if fv: loaders = [fv.split("-")[-1]]
+            # Usar list_forge_versions para obtener TODAS las versiones completas
+            fvs = mclib.forge.list_forge_versions()
+            # Filtrar por la versión de MC actual
+            loaders = [v for v in fvs if v.startswith(f"{mc_version}-")]
 
         elif loader_type == 'NeoForge':
             # 1. Descargar de los dos repositorios (Nuevo y Viejo)

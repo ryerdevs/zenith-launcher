@@ -43,7 +43,14 @@ def install_task(mc_version, loader, loader_version, instance_id):
         
         elif loader == 'Forge' and loader_version:
             announce('installing', f"Instalando Forge (puede tardar)...")
-            mclib.forge.install_forge_version(loader_version, global_path_str, callback=callback)
+            # Ensure we have the full version format (mc_version-build)
+            # If loader_version doesn't contain a hyphen, it's just the build number (old format)
+            if '-' not in loader_version:
+                full_version = f"{mc_version}-{loader_version}"
+                print(f"[FORGE] Reconstructing full version: {full_version}")
+            else:
+                full_version = loader_version
+            mclib.forge.install_forge_version(full_version, global_path_str, callback=callback)
         
         elif loader == 'NeoForge' and loader_version:
             announce('installing', f"Instalando NeoForge...")

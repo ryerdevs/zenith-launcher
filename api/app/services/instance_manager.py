@@ -49,7 +49,11 @@ class InstanceManager:
 
         final_image = "/minecraft-landscape-dark.jpg" 
         if image_data:
-            final_image = self._process_image(image_data, instance_folder)
+            # Check if it is a preset URL (starts with /) or base64 data
+            if image_data.startswith('/'):
+                final_image = image_data
+            else:
+                final_image = self._process_image(image_data, instance_folder)
 
         config = {
             "name": name,
@@ -81,8 +85,13 @@ class InstanceManager:
         if 'loaderVersion' in data: config['loaderVersion'] = data['loaderVersion']
         
         # Procesar nueva imagen si existe
-        if data.get('image') and data['image'].startswith('data:'):
-            config['image'] = self._process_image(data['image'], instance_folder)
+        if 'image' in data and data['image']:
+            image = data['image']
+            # Check if it is a preset URL or base64 data
+            if image.startswith('/'):
+                config['image'] = image
+            elif image.startswith('data:'):
+                config['image'] = self._process_image(image, instance_folder)
             
         self._save_json(config_path, config)
 
@@ -111,6 +120,20 @@ class InstanceManager:
     def _save_json(self, path, data):
         with open(path, "w", encoding='utf-8') as f:
             json.dump(data, f, indent=4)
+
+    def update_state(self, instance_id, new_state):
+        """Updates only the state field of an instance."""
+        instance_folder = INSTANCES_DIR / instance_id
+        config_path = instance_folder / "instance.json"
+        
+        if not config_path.exists():
+            return
+            
+        with open(config_path, "r", encoding='utf-8') as f:
+            config = json.load(f)
+            
+        config['state'] = new_state
+        self._save_json(config_path, config)
 
     def get_mods(self, instance_id):
         """Lista los archivos .jar en la carpeta mods de la instancia."""

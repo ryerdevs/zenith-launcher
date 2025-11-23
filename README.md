@@ -19,6 +19,15 @@ This project utilizes a powerful combination of modern technologies:
 -   **Backend**: [Python](https://www.python.org/) for handling complex logic and file operations.
 -   **Desktop Framework**: [Tauri](https://tauri.app/) for a lightweight and secure desktop application experience.
 
+## Documentation
+
+Detailed documentation is available in the [`docs/`](docs/) directory:
+
+-   [Architecture Overview](docs/ARCHITECTURE.md)
+-   [API Reference](docs/API.md)
+-   [Setup Guide](docs/SETUP.md)
+-   [Contributing](docs/CONTRIBUTING.md)
+
 ## Getting Started
 
 Follow these steps to set up the project locally.

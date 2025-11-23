@@ -25,7 +25,13 @@
     /* ALIAS CONFIG (Añade esto) */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/app/*": ["./src/app/*"],
+      "@/core/*": ["./src/core/*"],
+      "@/modules/*": ["./src/modules/*"],
+      "@/ui/*": ["./src/ui/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/assets/*": ["./src/assets/*"]
     }
   },
   "include": ["src"]

@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App' // Quitamos la extensión .tsx, es más estándar
+import App from '@/app/App'
 import './index.css'
 
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/app/providers/ThemeProvider"
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
