@@ -76,10 +76,15 @@ export const api = {
             })
             return res.json()
         },
-        importModpack: async (formData: FormData) => {
+        importModpack: async (data: FormData | { url: string }) => {
+            const isFormData = data instanceof FormData
+            const headers: HeadersInit = isFormData ? {} : { 'Content-Type': 'application/json' }
+            const body = isFormData ? data : JSON.stringify(data)
+
             const res = await fetch(`${API_URL}/instances/import-modpack`, {
                 method: 'POST',
-                body: formData
+                headers,
+                body
             })
             return res.json()
         }

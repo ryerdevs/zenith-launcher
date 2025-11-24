@@ -172,6 +172,29 @@ class InstanceService:
         with open(path, "w", encoding='utf-8') as f:
             json.dump(data, f, indent=4)
 
+    def update_state(self, instance_id: str, new_state: str) -> None:
+        """
+        Update the state of an instance.
+        
+        Args:
+            instance_id: ID of the instance
+            new_state: New state string
+        """
+        instance_folder = INSTANCES_DIR / instance_id
+        config_path = instance_folder / "instance.json"
+        
+        if not config_path.exists():
+            return
+            
+        try:
+            with open(config_path, "r", encoding='utf-8') as f:
+                config = json.load(f)
+                
+            config['state'] = new_state
+            self._save_json(config_path, config)
+        except Exception as e:
+            print(f"Error updating state for {instance_id}: {e}")
+
 
 # Singleton instance
 instance_service = InstanceService()

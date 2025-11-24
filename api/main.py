@@ -8,7 +8,7 @@ from flask_cors import CORS
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from app.config import API_PORT, INSTANCES_DIR
-from app.sse import event_stream
+from app.core.sse import event_stream
 from app.routes.auth import auth_bp
 from app.routes.info import info_bp
 from app.routes.instances import instances_bp

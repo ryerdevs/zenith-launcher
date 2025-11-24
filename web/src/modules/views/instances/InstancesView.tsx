@@ -110,8 +110,10 @@ export function InstancesView() {
                         <Card 
                             key={instance.id} 
                             className={cn(
-                                "group relative overflow-hidden border-border/50 bg-card/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 cursor-pointer",
-                                selectedInstanceName === instance.name ? "ring-2 ring-primary" : "hover:border-primary/50"
+                                "group relative overflow-hidden rounded-xl border-2 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 cursor-pointer",
+                                selectedInstanceName === instance.name 
+                                    ? "border-primary bg-card/50" 
+                                    : "border-transparent bg-card/50 hover:border-primary/50"
                             )}
                             onClick={() => {
                                 useLauncher.setState({ selectedInstanceName: instance.name })

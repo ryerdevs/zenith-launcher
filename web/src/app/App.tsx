@@ -117,7 +117,10 @@ function App() {
             </div>
           ) : (
             <div className="flex w-full h-full animate-in fade-in duration-500">
-                <Sidebar activeView={activeView} setActiveView={setActiveView} />
+                {useLauncher.getState().sidebarPosition !== 'right' && (
+                    <Sidebar activeView={activeView} setActiveView={setActiveView} />
+                )}
+                
                 <main className="flex-1 overflow-hidden bg-muted/5 relative flex flex-col">
                     <div className="flex-1 overflow-y-auto p-0 scroll-smooth">
                         {activeView === 'home' && <HomeView />}
@@ -126,6 +129,10 @@ function App() {
                         {activeView === 'settings' && <SettingsView />}
                     </div>
                 </main>
+
+                {useLauncher.getState().sidebarPosition === 'right' && (
+                    <Sidebar activeView={activeView} setActiveView={setActiveView} />
+                )}
             </div>
           )}
         </div>

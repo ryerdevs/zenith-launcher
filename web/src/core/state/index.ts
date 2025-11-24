@@ -21,6 +21,9 @@ interface LauncherState {
     selectedInstanceName: string | null
     setSelectedInstanceName: (name: string | null) => void
     
+    sidebarPosition: 'left' | 'right'
+    setSidebarPosition: (pos: 'left' | 'right') => void
+
     // --- NUEVO: Estado de instalación ---
     isInstalled: boolean
     setIsInstalled: (v: boolean) => void
@@ -69,6 +72,10 @@ export const useLauncher = create<LauncherState>()(
                 downloadProgress: progress ?? 0
             }),
 
+            // UI Preferences
+            sidebarPosition: 'left',
+            setSidebarPosition: (pos) => set({ sidebarPosition: pos }),
+
             logs: [],
             addLog: (msg, type = 'info') => {
                 const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second:'2-digit' })
@@ -84,6 +91,7 @@ export const useLauncher = create<LauncherState>()(
                 username: state.username,
                 loginMode: state.loginMode,
                 selectedInstanceName: state.selectedInstanceName,
+                sidebarPosition: state.sidebarPosition,
                 // Guardamos logs si quieres persistencia, sino quítalo
                 // logs: state.logs 
             }),

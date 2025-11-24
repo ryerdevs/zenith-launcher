@@ -8,9 +8,9 @@ import traceback
 import minecraft_launcher_lib as mclib
 
 from app.config import GLOBAL_DIR, INSTANCES_DIR, SETTINGS_FILE
-from app.sse import announce
-from app.services.instances import instance_state_service
-from app.services.installer import install_task
+from app.core.sse import announce
+from app.services.instances.instance_service import instance_service
+from app.services.game.installer import install_task
 
 class LauncherService:
     def launch_thread(self, instance_id, username):
@@ -41,7 +41,7 @@ class LauncherService:
 
             # 3. Preparar Argumentos
             announce('launching', "Configurando Java...", 50)
-            instance_state_service.update_state(instance_id, "running")
+            instance_service.update_state(instance_id, "running")
 
             settings = {"ram_gb": 4, "java_path": "", "extra_jvm_args": ""}
             if SETTINGS_FILE.exists():
@@ -137,12 +137,12 @@ class LauncherService:
             else:
                 announce("error", f"El juego se cerró (Código {rc})")
             
-            instance_state_service.update_state(instance_id, "ready")
+            instance_service.update_state(instance_id, "ready")
 
         except Exception as e:
             print(f"[FATAL] {e}")
             traceback.print_exc()
             announce("error", f"Error fatal: {str(e)}")
-            instance_state_service.update_state(instance_id, "error")
+            instance_service.update_state(instance_id, "error")
 
 launcher_service = LauncherService()

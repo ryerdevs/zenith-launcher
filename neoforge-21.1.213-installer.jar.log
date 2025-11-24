@@ -1,0 +1,12 @@
+JVM info: Eclipse Adoptium - 25.0.1 - 25.0.1+8-LTS
+java.net.preferIPv4Stack=true
+Current Time: 23/11/2025 15:49:19
+Host: maven.neoforged.net [79.127.209.45, 79.127.209.42]
+Host: libraries.minecraft.net [13.107.246.33, 13.107.213.33]
+Host: launchermeta.mojang.com [13.107.246.33, 13.107.213.33]
+Host: piston-meta.mojang.com [13.107.246.33, 13.107.213.33]
+Host: sessionserver.mojang.com [13.107.246.33, 13.107.213.33]
+Found java version 25.0.1
+Target Directory: D:\Zenith\data\libraries
+There is no minecraft launcher profile in "D:\Zenith\data\libraries", you need to run the launcher first!
+There was an error during installation

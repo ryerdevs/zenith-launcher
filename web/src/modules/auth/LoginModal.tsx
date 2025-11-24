@@ -17,8 +17,11 @@ export function LoginModal() {
   const [isOffline, setIsOffline] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  
+  // Estado local para el input, inicializado con el valor global si existe
+  const [localUsername, setLocalUsername] = useState(username || '')
 
-  const safeUsername = username || ''
+  const safeUsername = localUsername || ''
 
   // Lógica del Avatar:
   // Si hay texto, usa ese nombre. Si no, usa "MHF_Steve" (el ID oficial de la skin de Steve).
@@ -40,6 +43,7 @@ export function LoginModal() {
         // Intentar login (aunque sea offline, el backend puede validar cosas)
         try { await api.auth.loginOffline(safeUsername) } catch {}
         
+        // Actualizamos el estado global SOLO al enviar el formulario
         setTimeout(() => setUser(safeUsername, 'offline'), 500)
       } else {
           setTimeout(() => setUser('MicrosoftUser', 'online'), 1000)
@@ -123,8 +127,8 @@ export function LoginModal() {
                             <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                             <Input 
                                 id="username" 
-                                value={safeUsername} 
-                                onChange={(e) => setUser(e.target.value, 'offline')}
+                                value={localUsername} 
+                                onChange={(e) => setLocalUsername(e.target.value)}
                                 className="pl-9 h-10 bg-background/50 border-input focus:border-primary/50" 
                                 placeholder="Steve" 
                                 autoFocus

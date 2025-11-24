@@ -34,7 +34,7 @@ export function InstanceDashboard({ instance, onBack }: InstanceDashboardProps) 
     return (
         <div className="h-full flex flex-col animate-in fade-in slide-in-from-right-4 duration-300">
             {/* HEADER */}
-            <div className="flex items-start gap-6 mb-6 pb-6 border-b border-border/40">
+            <div className="flex items-start gap-6 mb-8 pb-8 border-b border-border/40 px-2">
                 <Button variant="ghost" size="icon" onClick={onBack} className="mt-1">
                     <ArrowLeft className="h-6 w-6" />
                 </Button>

@@ -2,13 +2,12 @@ from flask import Blueprint, request, jsonify, send_from_directory, abort
 import threading
 import json
 from app.config import INSTANCES_DIR
-from app.services.instances import (
-    instance_service,
-    content_service,
-    modpack_service,
-    file_system_service
-)
-from app.services.installer import install_task
+from app.services.instances.instance_service import instance_service
+from app.services.instances.modpack_service import modpack_service
+from app.services.game.installer import install_task
+from app.services.instances.image_service import image_service
+from app.services.instances.content_service import content_service
+from app.services.instances.file_system_service import file_system_service
 
 instances_bp = Blueprint('instances', __name__)
 
@@ -54,8 +53,32 @@ def install_instance_only():
 
         json_path = INSTANCES_DIR / instance_id / "instance.json"
         
+        # DEBUG: Check if modpack_files.json exists
+        modpack_files = INSTANCES_DIR / instance_id / "modpack_files.json"
+        print(f"[DEBUG ROUTE] Checking modpack files: {modpack_files} -> Exists: {modpack_files.exists()}")
+
         if not json_path.exists():
-            return jsonify({"status": "error", "message": "Instancia no encontrada"}), 404
+            # FALLBACK: Try to find by name (if frontend sent name instead of ID)
+            found = False
+            print(f"[DEBUG] ID not found, searching by name: '{instance_id}'")
+            for folder in INSTANCES_DIR.iterdir():
+                if folder.is_dir():
+                    cfg = folder / "instance.json"
+                    if cfg.exists():
+                        try:
+                            with open(cfg, "r", encoding='utf-8') as f:
+                                c = json.load(f)
+                                if c.get('name') == instance_id:
+                                    print(f"[DEBUG] Found instance by name: {folder.name}")
+                                    instance_id = folder.name
+                                    json_path = cfg
+                                    found = True
+                                    break
+                        except:
+                            pass
+            
+            if not found:
+                return jsonify({"status": "error", "message": "Instancia no encontrada"}), 404
 
         with open(json_path, "r", encoding='utf-8') as f:
             config = json.load(f)
@@ -94,44 +117,6 @@ def delete_instance_endpoint():
             
         instance_service.delete_instance(instance_id)
         return jsonify({"status": "success", "message": "Instancia eliminada"})
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-@instances_bp.route('/import-modpack', methods=['POST'])
-def import_modpack():
-    try:
-        if 'file' not in request.files:
-            return jsonify({"status": "error", "message": "No se envió ningún archivo"}), 400
-            
-        file = request.files['file']
-        if file.filename == '':
-            return jsonify({"status": "error", "message": "Nombre de archivo vacío"}), 400
-
-        if not file.filename.endswith('.zip'):
-            return jsonify({"status": "error", "message": "El archivo debe ser un ZIP"}), 400
-
-        import tempfile
-        import os
-        
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".zip") as temp_zip:
-            file.save(temp_zip.name)
-            temp_zip_path = temp_zip.name
-            
-        try:
-            result = modpack_service.import_modpack(temp_zip_path, file.filename)
-            return jsonify({"status": "success", **result})
-        finally:
-            if os.path.exists(temp_zip_path):
-                os.remove(temp_zip_path)
-
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-@instances_bp.route('/<instance_id>/mods', methods=['GET'])
-def get_instance_mods(instance_id):
-    try:
-        mods = content_service.get_mods(instance_id)
-        return jsonify(mods)
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
@@ -175,4 +160,77 @@ def open_instance_folder(instance_id):
         else:
             return jsonify({"status": "error", "message": "Carpeta no encontrada"}), 404
     except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@instances_bp.route('/import-modpack', methods=['POST'])
+def import_modpack_endpoint():
+    try:
+        # Check if it's a file upload
+        if 'file' in request.files:
+            file = request.files['file']
+            if file.filename == '':
+                return jsonify({"status": "error", "message": "No se seleccionó ningún archivo"}), 400
+            
+            if file:
+                # Save to temp file
+                temp_dir = INSTANCES_DIR / "temp_upload"
+                if not temp_dir.exists():
+                    temp_dir.mkdir()
+                
+                zip_path = temp_dir / file.filename
+                file.save(zip_path)
+                
+                try:
+                    result = modpack_service.import_modpack(str(zip_path), file.filename)
+                    return jsonify({"status": "success", **result})
+                finally:
+                    # Cleanup upload
+                    if zip_path.exists():
+                        try:
+                            import os
+                            os.remove(zip_path)
+                            # Try to remove dir if empty
+                            os.rmdir(temp_dir)
+                        except:
+                            pass
+
+        # Check if it's a JSON request (URL)
+        elif request.is_json:
+            data = request.json
+            url = data.get('url')
+            if not url:
+                return jsonify({"status": "error", "message": "Falta la URL"}), 400
+            
+            result = modpack_service.import_modpack_from_url(url)
+            
+            # AUTO-INSTALL: Trigger installation immediately
+            if result.get('id'):
+                instance_id = result['id']
+                print(f"[AUTO-INSTALL] Triggering install for {instance_id}")
+                
+                # Get instance config
+                json_path = INSTANCES_DIR / instance_id / "instance.json"
+                if json_path.exists():
+                    with open(json_path, "r", encoding='utf-8') as f:
+                        config = json.load(f)
+                    
+                    threading.Thread(
+                        target=install_task,
+                        args=(
+                            config.get('version'),
+                            config.get('modLoader'),
+                            config.get('loaderVersion'),
+                            instance_id
+                        ),
+                        daemon=True
+                    ).start()
+                    result['message'] += " La instalación ha comenzado automáticamente."
+
+            return jsonify({"status": "success", **result})
+            
+        else:
+            return jsonify({"status": "error", "message": "Solicitud inválida. Se requiere archivo o URL."}), 400
+
+    except Exception as e:
+        print(f"[IMPORT ERROR] {e}")
         return jsonify({"status": "error", "message": str(e)}), 500

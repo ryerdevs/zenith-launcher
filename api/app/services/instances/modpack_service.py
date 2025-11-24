@@ -50,10 +50,21 @@ class ModpackService:
                 manifest = json.load(f)
             
             # Extract modpack info
-            name, version, loader_name, loader_version = self._extract_info(manifest, original_filename)
+            name, version, loader_name, loader_version, project_id = self._extract_info(manifest, original_filename)
             
+            # Fetch metadata from CurseForge if project_id exists
+            image_url = None
+            if project_id:
+                try:
+                    from app.services.external.curseforge import curseforge_client
+                    info = curseforge_client.get_modpack_info(project_id)
+                    if info and info.get('logo'):
+                        image_url = info['logo'].get('url')
+                except Exception as e:
+                    print(f"Error fetching CF info: {e}")
+
             # Create instance
-            create_result = instance_service.create_instance(name, version, loader_name, loader_version)
+            create_result = instance_service.create_instance(name, version, loader_name, loader_version, image_url)
             instance_id = create_result['id']
             instance_folder = INSTANCES_DIR / instance_id
             
@@ -100,17 +111,19 @@ class ModpackService:
         
         if primary_loader:
             lid = primary_loader.get('id', '')
-            if 'forge' in lid:
+            if 'neoforge' in lid:
+                loader_name = "NeoForge"
+                loader_version = lid.replace('neoforge-', '')
+            elif 'forge' in lid:
                 loader_name = "Forge"
                 loader_version = lid.replace('forge-', '')
             elif 'fabric' in lid:
                 loader_name = "Fabric"
                 loader_version = lid.replace('fabric-', '')
-            elif 'neoforge' in lid:
-                loader_name = "NeoForge"
-                loader_version = lid.replace('neoforge-', '')
         
-        return name, version, loader_name, loader_version
+        project_id = manifest.get('projectID')
+        
+        return name, version, loader_name, loader_version, project_id
     
     def _copy_overrides(self, temp_dir: Path, manifest: Dict, instance_folder: Path) -> None:
         """Copy override files to instance folder."""
@@ -125,6 +138,57 @@ class ModpackService:
             with open(instance_folder / "modpack_files.json", "w") as f:
                 json.dump(files, f)
 
+
+    def import_modpack_from_url(self, url: str) -> Dict:
+        """
+        Import a modpack from a direct download URL.
+        
+        Args:
+            url: Direct download URL for the ZIP file
+            
+        Returns:
+            dict: Result with instance_id and message
+        """
+        import requests
+        from urllib.parse import urlparse
+        import os
+        
+        # Create temporary directory
+        temp_dir = INSTANCES_DIR / "temp_import_url"
+        if temp_dir.exists():
+            shutil.rmtree(temp_dir)
+        temp_dir.mkdir()
+        
+        try:
+            # Download file
+            filename = os.path.basename(urlparse(url).path)
+            if not filename.endswith('.zip'):
+                filename = "modpack.zip"
+                
+            zip_path = temp_dir / filename
+            
+            response = requests.get(url, stream=True)
+            response.raise_for_status()
+            
+            with open(zip_path, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
+            
+            # Use existing import logic
+            # We pass the path as string because import_modpack expects it (based on current signature)
+            # But we need to be careful about cleanup. 
+            # The import_modpack method cleans up its own temp dir, but not the one we just created.
+            
+            # Actually, import_modpack takes a zip_path string.
+            # It extracts it to a NEW temp dir.
+            # So we can just call it.
+            
+            return self.import_modpack(str(zip_path), filename)
+            
+        finally:
+            # Cleanup our download temp dir
+            if temp_dir.exists():
+                shutil.rmtree(temp_dir)
 
 # Singleton instance
 modpack_service = ModpackService()

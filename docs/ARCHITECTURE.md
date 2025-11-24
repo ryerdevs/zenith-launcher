@@ -61,3 +61,42 @@ Manages the application window and spawns the Python backend process.
     - Spawns the Minecraft process.
 5. **Feedback**: Backend sends status updates (logs, progress) via Server-Sent Events (SSE) to the Frontend.
 6. **UI Update**: `useLauncher` store updates `gameStatus`, reflecting changes in the UI.
+
+
+7. Backend Restructuring Plan:
+    Goal Description
+    The goal is to organize the backend code into a more logical and scalable structure. Currently, the services directory is a mix of files and folders, and some core utilities are in the root app folder.
+
+    Proposed Structure
+    api/app/
+    ├── config.py             # Keep at root (standard)
+    ├── __init__.py           # App factory
+    ├── core/                 # [NEW] Core utilities
+    │   ├── __init__.py
+    │   └── sse.py            # Moved from app/sse.py
+    ├── routes/               # API Endpoints
+    │   ├── __init__.py
+    │   ├── auth.py
+    │   ├── info.py
+    │   ├── instances.py
+    │   ├── launch.py
+    │   └── settings.py
+    └── services/             # Business Logic
+    ├── __init__.py
+    ├── external/         # [NEW] External API integrations
+    │   ├── __init__.py
+    │   └── curseforge.py # Moved from services/curseforge.py
+    ├── game/             # [NEW] Game execution & installation
+    │   ├── __init__.py
+    │   ├── installer.py      # Moved from services/installer.py
+    │   ├── launcher.py       # Moved from services/launcher.py
+    │   └── custom_loaders.py # Moved from services/custom_loaders.py
+    └── instances/        # Instance management (Existing)
+        ├── __init__.py
+        ├── instance_service.py
+        ├── modpack_service.py
+        ├── modpack_installer.py
+        ├── image_service.py
+        ├── content_service.py
+        ├── file_system_service.py
+        └── instance_state_service.py

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 import threading
-from app.services.launcher import launcher_service
+from app.services.game.launcher import launcher_service
 
 launch_bp = Blueprint('launch', __name__)
 
