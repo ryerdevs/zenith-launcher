@@ -15,6 +15,10 @@ import { InstancesView } from "@/modules/views/instances"
 import { ConsoleView } from "@/modules/views/console"
 import { SettingsView } from "@/modules/views/settings"
 
+// IMAGES
+import imgCinematic from '@/assets/minecraft-cinematic-landscape.jpg'
+import imgRtx from '@/assets/minecraft-rtx-ray-tracing-realistic-lighting-shade.jpg'
+
 function App() {
   // Añadimos 'setInstances' para guardar la lista al iniciar
   const { username, setGameStatus, setIsPlaying, addLog, setInstances } = useLauncher()
@@ -37,7 +41,7 @@ function App() {
   // 2. Lógica SSE (Eventos en Tiempo Real del Backend)
   useEffect(() => {
     if (!username) return; 
-
+    
     console.log("🔌 Conectando a eventos del servidor...");
     const eventSource = new EventSource('http://localhost:5000/api/events');
 
@@ -106,14 +110,13 @@ function App() {
           {!username ? (
             <div className="absolute inset-0 flex items-center justify-center bg-background">
                <div 
-                 className={`absolute inset-0 bg-cover bg-center opacity-160 animate-in fade-in duration-1000 ${
-                   theme === 'dark' 
-                     ? "bg-[url('/minecraft-cinematic-landscape.jpg')]" 
-                     : "bg-[url('/minecraft-rtx-ray-tracing-realistic-lighting-shade.jpg')]"
-                 }`} 
+                 className="absolute inset-0 bg-cover bg-center opacity-160 animate-in fade-in duration-1000"
+                 style={{
+                   backgroundImage: `url(${theme === 'dark' ? imgCinematic : imgRtx})`
+                 }}
                />
                <div className="z-10 animate-in zoom-in-95 duration-500"> <LoginModal /> </div>
-               <div className="absolute bottom-4 right-6 text-xs text-muted-foreground font-mono z-10 opacity-50">MineLauncher v0.1</div>
+               <div className="absolute bottom-4 right-6 text-xs text-muted-foreground font-mono z-10 opacity-50">Zenith v0.0.1</div>
             </div>
           ) : (
             <div className="flex w-full h-full animate-in fade-in duration-500">

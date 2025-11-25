@@ -51,6 +51,8 @@ class ModpackInstallerService:
             
             total_mods = len(mod_files_info)
             downloaded = 0
+            if callback:
+                callback.get("setMax")(100)
             
             for mod in mod_files_info:
                 download_url = mod.get('downloadUrl')
@@ -63,9 +65,13 @@ class ModpackInstallerService:
                 
                 # Download if not exists
                 if not mod_path.exists():
-                    # Calculate progress: 10% to 90%
-                    progress = int(10 + (downloaded / total_mods) * 80)
-                    announce('downloading', f"Descargando: {filename}", progress)
+                    # Calculate progress: 0% to 100% relative to this stage
+                    progress = int((downloaded / total_mods) * 100)
+                    if callback:
+                        callback.get("setStatus")(f"Descargando mod: {filename}")
+                        callback.get("setProgress")(progress)
+                    else:
+                        announce('downloading', f"Descargando: {filename}", progress)
                     
                     try:
                         resp = requests.get(download_url, stream=True)

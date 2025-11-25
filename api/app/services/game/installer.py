@@ -27,45 +27,75 @@ def install_task(mc_version, loader, loader_version, instance_id):
     """
     global_path_str = str(GLOBAL_DIR)
     
-    announce('downloading', f"Validando versión {mc_version}...", 0)
+    # --- SMART MONOTONIC PROGRESS SYSTEM ---
+    # Detectamos la fase basada en el texto de estado y asignamos rangos.
+    # Evitamos que la barra retroceda.
 
-    # Callbacks para reportar progreso al frontend
-    # THROTTLING: Evitar saturar el frontend con miles de eventos por segundo
-    current_max = [0]
-    last_update_time = [0]
-    last_percent = [-1]
+    def create_smart_callback():
+        state = {
+            "current_range": (0, 10), # Rango inicial
+            "local_max": 1,
+            "last_global_percent": 0,
+            "last_update_time": 0
+        }
 
-    def set_max(val):
-        current_max[0] = val 
-        
-    def set_progress(val):
-        if current_max[0] > 0:
-            percent = int((val / current_max[0]) * 100)
-            now = time.time()
+        def set_status(text):
+            # Detección de Fases por Texto
+            t = text.lower()
+            if "download libraries" in t or "descargando librerías" in t:
+                state["current_range"] = (10, 40)
+            elif "download assets" in t or "descargando recursos" in t:
+                state["current_range"] = (40, 55)
+            elif "java runtime" in t or "java" in t:
+                state["current_range"] = (55, 60)
+            elif "processor" in t or "installer" in t or "fabric" in t or "forge" in t:
+                state["current_range"] = (60, 70)
+            elif "mod" in t or "resolviendo" in t:
+                state["current_range"] = (70, 100)
+            elif "complete" in t:
+                pass
+
+            # FIX: Enviar el último progreso conocido para evitar que la barra salte a 0
+            current_p = max(0, state["last_global_percent"])
+            announce('installing', text, current_p)
+
+        def set_max(val):
+            state["local_max"] = max(1, val) # Evitar división por cero
+
+        def set_progress(val):
+            start, end = state["current_range"]
+            local_percent = val / state["local_max"]
             
-            # Solo enviar si cambió el porcentaje Y (pasó tiempo suficiente O es inicio/fin)
-            if percent != last_percent[0]:
-                if (now - last_update_time[0] > 0.1) or percent == 100 or percent == 0:
-                    announce('downloading', f"Descargando archivos...", percent)
-                    last_update_time[0] = now
-                    last_percent[0] = percent
+            # Mapear al rango global
+            global_percent = int(start + (local_percent * (end - start)))
+            
+            # MONOTONICIDAD: Nunca bajar del último porcentaje reportado
+            if global_percent < state["last_global_percent"]:
+                global_percent = state["last_global_percent"]
+            
+            state["last_global_percent"] = global_percent
 
-    def set_status(text):
-        announce('installing', text)
+            # Throttling
+            now = time.time()
+            if global_percent != state["last_global_percent"] or (now - state["last_update_time"] > 0.1):
+                announce('downloading', f"Instalando... {global_percent}%", global_percent)
+                state["last_update_time"] = now
 
-    callback = {
-        "setStatus": set_status,
-        "setProgress": set_progress,
-        "setMax": set_max
-    }
+        return {
+            "setStatus": set_status,
+            "setProgress": set_progress,
+            "setMax": set_max
+        }
 
     try:
         instance_service.update_state(instance_id, "installing")
+        callback = create_smart_callback()
         
-        # 1. Instalar Vanilla (Assets, Libraries, Client jar)
+        # 1. Instalar Vanilla (Detectará fases internamente)
+        announce('downloading', f"Verificando Vanilla {mc_version}...", 0)
         mclib.install.install_minecraft_version(mc_version, global_path_str, callback=callback)
 
-        # 2. Instalar Loader (Fabric, Forge, etc)
+        # 2. Instalar Loader
         if loader == 'Fabric' and loader_version:
             announce('installing', f"Instalando Fabric...")
             mclib.fabric.install_fabric(mc_version, global_path_str, loader_version, callback=callback)
@@ -82,7 +112,7 @@ def install_task(mc_version, loader, loader_version, instance_id):
             announce('installing', f"Instalando NeoForge {loader_version}...")
             
             def simple_status_callback(msg):
-                announce('installing', str(msg))
+                callback["setStatus"](str(msg))
                 
             install_neoforge(
                 mc_version=mc_version,
@@ -90,12 +120,15 @@ def install_task(mc_version, loader, loader_version, instance_id):
                 minecraft_directory=global_path_str,
                 status_callback=simple_status_callback
             )
+            announce('downloading', "NeoForge instalado.", 70)
         
         elif loader == 'Quilt' and loader_version:
             announce('installing', f"Instalando Quilt...")
             mclib.quilt.install_quilt(mc_version, global_path_str, loader_version, callback=callback)
 
         # 3. Descargar mods si es un modpack
+        announce('downloading', f"Verificando Mods...", 70)
+        
         from app.services.instances.modpack_installer import modpack_installer_service
         modpack_installer_service.install_mods(instance_id, callback)
 

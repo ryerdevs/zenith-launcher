@@ -11,22 +11,38 @@ import { Loader2, Save, Upload, Image as ImageIcon, Settings2, Ban, Trash2 } fro
 import { cn } from '@/utils/cn'
 import { ModsManager } from '../instance-dashboard/mods/ModsManager'
 
+// IMAGES
+import imgLandscapeDark from '@/assets/minecraft-cinematic-landscape.jpg'
+import imgTrialChambers from '@/assets/minecraft-1-21-trial-chambers-with-shaders-realist.jpg'
+import imgCavesCliffs from '@/assets/minecraft-caves-cliffs-lush-caves-dripstone-shade.jpg'
+import imgCherryBlossom from '@/assets/minecraft-cherry-blossom-biome.png'
+import imgCherryGrove from '@/assets/minecraft-cherry-blossom-grove-biome-with-shaders-.jpg'
+import imgCinematic from '@/assets/minecraft-cinematic-landscape.jpg'
+import imgDeepDark from '@/assets/minecraft-deep-dark-ancient-city-warden-sculk-with.jpg'
+import imgEpicCastle from '@/assets/minecraft-epic-medieval-castle-build-with-shaders-.jpg'
+import imgMangrove from '@/assets/minecraft-mangrove-swamp-biome-shaders-realistic.jpg'
+import imgNether from '@/assets/minecraft-nether-bastion-remnant-piglins-with-shad.jpg'
+import imgOcean from '@/assets/minecraft-ocean-monument-underwater-shaders-realis.jpg'
+import imgRtx from '@/assets/minecraft-rtx-ray-tracing-realistic-lighting-shade.jpg'
+import imgTrickyTrials from '@/assets/minecraft-tricky-trials-update.jpg'
+import imgVillage from '@/assets/minecraft-village-pillagers-raid-shaders-detailed.jpg'
+
 // LISTA DE IMÁGENES
 const PRESET_IMAGES = [
-    '/minecraft-landscape-dark.jpg',
-    '/minecraft-1-21-trial-chambers-with-shaders-realist.jpg',
-    '/minecraft-caves-cliffs-lush-caves-dripstone-shade.jpg',
-    '/minecraft-cherry-blossom-biome.png',
-    '/minecraft-cherry-blossom-grove-biome-with-shaders-.jpg',
-    '/minecraft-cinematic-landscape.jpg',
-    '/minecraft-deep-dark-ancient-city-warden-sculk-with.jpg',
-    '/minecraft-epic-medieval-castle-build-with-shaders-.jpg',
-    '/minecraft-mangrove-swamp-biome-shaders-realistic.jpg',
-    '/minecraft-nether-bastion-remnant-piglins-with-shad.jpg',
-    '/minecraft-ocean-monument-underwater-shaders-realis.jpg',
-    '/minecraft-rtx-ray-tracing-realistic-lighting-shade.jpg',
-    '/minecraft-tricky-trials-update.jpg',
-    '/minecraft-village-and-mansion-dark-forest-shaders.jpg'
+    imgLandscapeDark,
+    imgTrialChambers,
+    imgCavesCliffs,
+    imgCherryBlossom,
+    imgCherryGrove,
+    imgCinematic,
+    imgDeepDark,
+    imgEpicCastle,
+    imgMangrove,
+    imgNether,
+    imgOcean,
+    imgRtx,
+    imgTrickyTrials,
+    imgVillage
 ]
 
 interface InstanceDetailsDialogProps {

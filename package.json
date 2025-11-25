@@ -1,6 +1,6 @@
 {
-  "name": "minelauncher-desktop",
-  "version": "0.1.0",
+  "name": "zenith-launcher",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "concurrently \"npm run dev:api\" \"npm run dev:tauri\"",

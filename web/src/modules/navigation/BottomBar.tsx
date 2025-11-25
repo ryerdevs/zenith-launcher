@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import { Button } from '@/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
-import { Settings, User, LogOut, Plus, Bell, ChevronDown, RefreshCw } from 'lucide-react'
-import { Badge } from '@/ui/badge'
+import { Settings, User, LogOut, Bell, ChevronDown } from 'lucide-react'
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/ui/dropdown-menu'
 import { useLauncher } from '@/core/state'
-import { PlayButton } from './PlayButton'
+import { InstanceSelector } from '@/modules/views/instances/InstanceSelector'
 import { api } from '@/core/api'
 import { useToast } from "@/ui/use-toast"
 import { CreateInstanceDialog } from '@/modules/views/instances/dialogs/CreateInstanceDialog'
@@ -20,11 +19,10 @@ export function BottomBar({ onOpenSettings }: BottomBarProps) {
   const { username, loginMode, logout, instances, setInstances, selectedInstanceName, setSelectedInstanceName, setIsPlaying, setGameStatus } = useLauncher()
   const { toast } = useToast()
   
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+
   const [showCreateDialog, setShowCreateDialog] = useState(false)
 
-  // Buscamos la instancia actual
-  const currentInstance = instances.find(i => i.id === selectedInstanceName)
+
 
   // --- FUNCIÓN JUGAR ---
   const handlePlay = async () => {
@@ -103,60 +101,15 @@ export function BottomBar({ onOpenSettings }: BottomBarProps) {
 
                 {/* --- CENTRO: BOTÓN JUGAR --- */}
                 <div className="flex items-center justify-center">
-                    <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
-                        
-                        <PlayButton 
-                            handlePlay={handlePlay} 
-                            handleInstall={handleInstall} 
-                            isDropdownOpen={isDropdownOpen}
-                            selectedInstanceImage={currentInstance?.image}
-                            instanceState={currentInstance?.state}
-                            displayName={currentInstance?.name} // <-- AQUI PASAMOS EL NOMBRE EDITADO
-                        />
-
-                        <DropdownMenuContent align="center" side="top" className="w-72 mb-2 p-2">
-                            <DropdownMenuLabel className="text-xs text-muted-foreground ml-2 flex justify-between items-center">
-                                <span>SELECCIONAR INSTANCIA</span>
-                                <Button variant="ghost" size="icon" className="h-4 w-4 hover:bg-muted" onClick={refreshInstances}>
-                                    <RefreshCw className="h-3 w-3"/>
-                                </Button>
-                            </DropdownMenuLabel>
-                            
-                            <div className="max-h-[300px] overflow-y-auto space-y-1 my-2 pr-1">
-                                {instances.length === 0 && (
-                                    <div className="text-center py-6 text-muted-foreground text-sm bg-muted/20 rounded-md border border-dashed">
-                                        No hay instancias
-                                    </div>
-                                )}
-                                {instances.map((inst) => (
-                                    <DropdownMenuItem 
-                                        key={inst.id} 
-                                        onClick={() => { setSelectedInstanceName(inst.id); setIsDropdownOpen(false) }} 
-                                        className="cursor-pointer gap-3 p-2 focus:bg-accent"
-                                    >
-                                        <img src={inst.image} className="w-8 h-8 rounded object-cover bg-zinc-800 border border-white/10" />
-                                        <div className="flex flex-col overflow-hidden">
-                                            <span className="font-bold truncate">{inst.name}</span>
-                                            <span className="text-[10px] text-muted-foreground truncate">{inst.modLoader} {inst.version}</span>
-                                        </div>
-                                        {inst.state === 'ready' 
-                                            ? <Badge variant="outline" className="ml-auto h-5 text-[10px] border-green-500/30 text-green-500 bg-green-500/5">Listo</Badge>
-                                            : <Badge variant="outline" className="ml-auto h-5 text-[10px] border-blue-500/30 text-blue-500 bg-blue-500/5">Nuevo</Badge>
-                                        }
-                                    </DropdownMenuItem>
-                                ))}
-                            </div>
-                            
-                            <DropdownMenuSeparator />
-                            
-                            <DropdownMenuItem 
-                                className="justify-center py-3 cursor-pointer bg-muted/30 hover:bg-primary/10 hover:text-primary text-muted-foreground transition-colors font-medium"
-                                onSelect={() => setShowCreateDialog(true)}
-                            >
-                                <Plus className="w-4 h-4 mr-2" /> Crear Nueva Instancia
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <InstanceSelector 
+                        instances={instances}
+                        selectedInstanceName={selectedInstanceName}
+                        handlePlay={handlePlay}
+                        handleInstall={handleInstall}
+                        refreshInstances={refreshInstances}
+                        setSelectedInstanceName={setSelectedInstanceName}
+                        onOpenCreateDialog={() => setShowCreateDialog(true)}
+                    />
                 </div>
 
                 {/* --- DERECHA: AJUSTES --- */}

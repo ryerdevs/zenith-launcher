@@ -1,34 +1,29 @@
-# Node.js
-node_modules/
-dist/
-npm-debug.log
-.env
-.env.local
-.env.*.local
-
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
-.venv/
 venv/
-env/
+.env
+
+# PyInstaller
+build/
+dist/
 *.spec
 
 # Tauri
 src-tauri/target/
+src-tauri/binaries/
 src-tauri/gen/
 
-# OS / IDE
-.DS_Store
-Thumbs.db
+# Node
+node_modules/
+web/dist/
+web/node_modules/
+
+# IDEs
 .vscode/
 .idea/
 *.swp
-*.swo
 
-# Web specific
-web/node_modules/
-web/dist/
-web/.env
-web/.env.local
+# Misc
+MLAPI/

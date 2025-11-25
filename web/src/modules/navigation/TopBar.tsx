@@ -57,7 +57,7 @@ export function TopBar() {
     >
       {/* Título y Versión */}
       <div className="flex items-center gap-2 pointer-events-none">
-        <span className="text-xs font-bold text-primary tracking-wider uppercase opacity-80">MineLauncher</span>
+        <span className="text-xs font-bold text-primary tracking-wider opacity-80">Zenith</span>
         <span className="text-[10px] text-muted-foreground bg-white/10 px-1.5 py-0.5 rounded">BETA</span>
       </div>
 

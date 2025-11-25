@@ -9,7 +9,7 @@ import { useTheme } from '@/app/providers/ThemeProvider'
 import { api } from '@/core/api'
 import { useLauncher } from '@/core/state'
 import { useToast } from '@/ui/use-toast'
-import { Save, RefreshCw, Monitor, Moon, Sun, Laptop, FolderOpen, Database, Cpu, Layout } from 'lucide-react'
+import { Save, RefreshCw, Monitor, Moon, Sun, Laptop, FolderOpen, Database, Cpu, Layout, Info } from 'lucide-react'
 import { cn } from '@/utils/cn'
 
 export function SettingsView() {
@@ -64,7 +64,7 @@ export function SettingsView() {
   const sections = [
     { id: 'general', label: 'General', icon: Monitor },
     { id: 'java', label: 'Java & Memoria', icon: Cpu },
-    { id: 'advanced', label: 'Avanzado', icon: Database },
+    { id: 'about', label: 'Acerca de', icon: Info },
   ]
 
   return (
@@ -76,10 +76,12 @@ export function SettingsView() {
             <h2 className="text-2xl font-bold tracking-tight">Configuración</h2>
             <p className="text-sm text-muted-foreground">Personaliza tu experiencia.</p>
         </div>
-        <Button onClick={handleSave} disabled={saving || loading} className="gap-2 shadow-lg shadow-primary/20">
-            {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            Guardar Cambios
-        </Button>
+        {activeSection !== 'about' && (
+            <Button onClick={handleSave} disabled={saving || loading} className="gap-2 shadow-lg shadow-primary/20">
+                {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                Guardar Cambios
+            </Button>
+        )}
       </div>
 
       <div className="flex-1 flex overflow-hidden">
@@ -162,7 +164,7 @@ export function SettingsView() {
                     </div>
                 )}
 
-                {/* JAVA SECTION */}
+                {/* JAVA & MEMORY SECTION */}
                 {activeSection === 'java' && (
                     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <div>
@@ -204,12 +206,7 @@ export function SettingsView() {
                                 </CardContent>
                             </Card>
                         </div>
-                    </div>
-                )}
 
-                {/* ADVANCED SECTION */}
-                {activeSection === 'advanced' && (
-                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <div>
                             <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
                                 <Database className="w-5 h-5 text-primary" /> Avanzado
@@ -230,6 +227,54 @@ export function SettingsView() {
                                     </div>
                                 </CardContent>
                             </Card>
+                        </div>
+                    </div>
+                )}
+
+                {/* ABOUT SECTION */}
+                {activeSection === 'about' && (
+                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
+                            <div className="w-24 h-24 bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-2xl flex items-center justify-center shadow-2xl mb-4 relative z-10">
+                                <span className="text-5xl font-extrabold text-white">Z</span>
+                            </div>
+                            <h1 className="text-4xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
+                                Zenith
+                            </h1>
+                            <div className="flex items-center gap-2">
+                                <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold border border-primary/20">
+                                    v0.0.1
+                                </span>
+                                <span className="text-muted-foreground text-sm">BETA</span>
+                            </div>
+                            <p className="text-muted-foreground max-w-md mx-auto mt-4">
+                                Un launcher de Minecraft moderno, rápido y elegante diseñado para la mejor experiencia de usuario.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <Card>
+                                <CardContent className="p-6 flex flex-col items-center text-center gap-2">
+                                    <div className="p-3 bg-blue-500/10 rounded-full text-blue-500 mb-2">
+                                        <Laptop className="w-6 h-6" />
+                                    </div>
+                                    <h3 className="font-bold">Creado por</h3>
+                                    <p className="text-sm text-muted-foreground">Ryer & Antigravity Team</p>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardContent className="p-6 flex flex-col items-center text-center gap-2">
+                                    <div className="p-3 bg-purple-500/10 rounded-full text-purple-500 mb-2">
+                                        <Database className="w-6 h-6" />
+                                    </div>
+                                    <h3 className="font-bold">Tecnología</h3>
+                                    <p className="text-sm text-muted-foreground">React • Tauri • Python • Rust</p>
+                                </CardContent>
+                            </Card>
+                        </div>
+                        
+                        <div className="text-center text-xs text-muted-foreground pt-8">
+                            © 2024 Zenith Launcher Project. All rights reserved.
                         </div>
                     </div>
                 )}

@@ -3,6 +3,24 @@ import { Badge } from '@/ui/badge'
 import { Button } from '@/ui/button'
 import { Sparkles, ArrowRight, Zap, Users, Box, Hammer, Palette, User, ShoppingBag, Globe, Server, Layers } from 'lucide-react'
 
+// IMAGES
+import imgTrialChambers from '@/assets/minecraft-1-21-trial-chambers-with-shaders-realist.jpg'
+import imgCherryGrove from '@/assets/minecraft-cherry-blossom-grove-biome-with-shaders-.jpg'
+import imgRtx from '@/assets/minecraft-rtx-ray-tracing-realistic-lighting-shade.jpg'
+import imgDeepDark from '@/assets/minecraft-deep-dark-ancient-city-warden-sculk-with.jpg'
+import imgMangrove from '@/assets/minecraft-mangrove-swamp-biome-shaders-realistic.jpg'
+import imgNewMobs from '@/assets/minecraft-new-mobs-sniffer-camel-with-shaders-deta.jpg'
+import imgOceanMonument from '@/assets/minecraft-ocean-monument-underwater-shaders-realis.jpg'
+import imgEpicCastle from '@/assets/minecraft-epic-medieval-castle-build-with-shaders-.jpg'
+import imgShadersComparison from '@/assets/minecraft-shaders-comparison-before-after-realist.jpg'
+import imgRedstone from '@/assets/minecraft-complex-redstone-machine-contraption-wit.jpg'
+import imgCavesCliffs from '@/assets/minecraft-caves-cliffs-lush-caves-dripstone-shade.jpg'
+import imgWoodland from '@/assets/minecraft-woodland-mansion-dark-forest-shaders.jpg'
+import imgResourcePack from '@/assets/minecraft-hd-resource-pack-textures-comparison-sha.jpg'
+import imgSkins from '@/assets/minecraft-skin-customization-editor-3d.jpg'
+import imgMarketplace from '@/assets/minecraft-marketplace-community-content.jpg'
+import imgRealms from '@/assets/minecraft-realms-plus-friends-server.jpg'
+
 export function HomeView() {
   return (
     <div className="flex-1 overflow-y-auto h-full bg-background scroll-smooth">
@@ -32,7 +50,7 @@ export function HomeView() {
           <Card className="col-span-12 md:col-span-8 row-span-2 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-1-21-trial-chambers-with-shaders-realist.jpg')" }}
+              style={{ backgroundImage: `url(${imgTrialChambers})` }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
             <div className="relative h-full flex flex-col justify-end p-10">
@@ -56,7 +74,7 @@ export function HomeView() {
           <Card className="col-span-12 md:col-span-4 row-span-1 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-cherry-blossom-grove-biome-with-shaders-.jpg')" }}
+              style={{ backgroundImage: `url(${imgCherryGrove})` }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
             <div className="relative h-full p-6 flex flex-col justify-end">
@@ -71,7 +89,7 @@ export function HomeView() {
           <Card className="col-span-12 md:col-span-4 row-span-1 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-rtx-ray-tracing-realistic-lighting-shade.jpg')" }}
+              style={{ backgroundImage: `url(${imgRtx})` }}
             />
             <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors" />
             <div className="relative h-full p-6 flex flex-col items-center justify-center text-center">
@@ -87,7 +105,7 @@ export function HomeView() {
           <Card className="col-span-12 md:col-span-6 row-span-1 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-deep-dark-ancient-city-warden-sculk-with.jpg')" }}
+              style={{ backgroundImage: `url(${imgDeepDark})` }}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent" />
             <div className="relative h-full p-8 flex flex-col justify-center max-w-lg">
@@ -111,7 +129,7 @@ export function HomeView() {
           <Card className="col-span-6 md:col-span-4 row-span-1 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-mangrove-swamp-biome-shaders-realistic.jpg')" }}
+              style={{ backgroundImage: `url(${imgMangrove})` }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
             <div className="relative h-full p-6 flex flex-col justify-end">
@@ -124,7 +142,7 @@ export function HomeView() {
           <Card className="col-span-12 md:col-span-4 row-span-1 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
              <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-new-mobs-sniffer-camel-with-shaders-deta.jpg')" }}
+              style={{ backgroundImage: `url(${imgNewMobs})` }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
             <div className="relative h-full p-6 flex flex-col justify-end">
@@ -139,7 +157,7 @@ export function HomeView() {
           <Card className="col-span-12 md:col-span-4 row-span-2 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
              <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-ocean-monument-underwater-shaders-realis.jpg')" }}
+              style={{ backgroundImage: `url(${imgOceanMonument})` }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
             <div className="relative h-full flex flex-col justify-end p-8">
@@ -157,7 +175,7 @@ export function HomeView() {
           <Card className="col-span-12 md:col-span-4 row-span-2 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
              <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-epic-medieval-castle-build-with-shaders-.jpg')" }}
+              style={{ backgroundImage: `url(${imgEpicCastle})` }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
             <div className="relative h-full flex flex-col justify-end p-8">
@@ -175,7 +193,7 @@ export function HomeView() {
           <Card className="col-span-12 md:col-span-4 row-span-1 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-shaders-comparison-before-after-realist.jpg')" }}
+              style={{ backgroundImage: `url(${imgShadersComparison})` }}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-transparent to-transparent" />
             <div className="relative h-full p-6 flex flex-col justify-center">
@@ -188,7 +206,7 @@ export function HomeView() {
           <Card className="col-span-6 md:col-span-4 row-span-1 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-complex-redstone-machine-contraption-wit.jpg')" }}
+              style={{ backgroundImage: `url(${imgRedstone})` }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
             <div className="relative h-full p-6 flex flex-col justify-end">
@@ -210,7 +228,7 @@ export function HomeView() {
           <Card className="col-span-12 md:col-span-6 row-span-2 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-caves-cliffs-lush-caves-dripstone-shade.jpg')" }}
+              style={{ backgroundImage: `url(${imgCavesCliffs})` }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
             <div className="relative h-full flex flex-col justify-end p-8">
@@ -232,7 +250,7 @@ export function HomeView() {
           <Card className="col-span-12 md:col-span-4 row-span-1 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-woodland-mansion-dark-forest-shaders.jpg')" }}
+              style={{ backgroundImage: `url(${imgWoodland})` }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
             <div className="relative h-full p-6 flex flex-col justify-end">
@@ -245,7 +263,7 @@ export function HomeView() {
            <Card className="col-span-12 md:col-span-4 row-span-1 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-hd-resource-pack-textures-comparison-sha.jpg')" }}
+              style={{ backgroundImage: `url(${imgResourcePack})` }}
             />
             <div className="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-colors" />
             <div className="relative h-full p-6 flex flex-col items-center justify-center text-center">
@@ -258,7 +276,7 @@ export function HomeView() {
           <Card className="col-span-12 md:col-span-4 row-span-1 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-skin-customization-editor-3d.jpg')" }}
+              style={{ backgroundImage: `url(${imgSkins})` }}
             />
              <div className="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-colors" />
              <div className="relative h-full p-6 flex flex-col items-center justify-center text-center">
@@ -271,7 +289,7 @@ export function HomeView() {
            <Card className="col-span-12 md:col-span-4 row-span-1 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-marketplace-community-content.jpg')" }}
+              style={{ backgroundImage: `url(${imgMarketplace})` }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
             <div className="relative h-full p-6 flex flex-col justify-end">
@@ -286,7 +304,7 @@ export function HomeView() {
            <Card className="col-span-12 md:col-span-6 row-span-1 group relative overflow-hidden border-0 rounded-none shadow-none p-0 bg-zinc-900">
              <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-60"
-              style={{ backgroundImage: "url('/minecraft-realms-plus-friends-server.jpg')" }}
+              style={{ backgroundImage: `url(${imgRealms})` }}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-purple-900/90 to-transparent" />
             <div className="relative h-full p-6 flex items-center gap-4">
@@ -326,3 +344,4 @@ export function HomeView() {
     </div>
   )
 }
+

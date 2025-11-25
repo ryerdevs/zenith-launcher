@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/ui/button'
 import { DropdownMenuTrigger } from '@/ui/dropdown-menu'
-import { Loader2, ChevronUp, Square, Clock, Play, HardDriveDownload, Download } from 'lucide-react'
+import { Loader2, ChevronUp, Square, Clock, Play, Download } from 'lucide-react'
+import { ProgressBar } from './components/ProgressBar'
 import { useLauncher } from '@/core/state'
 
 interface PlayButtonProps {
@@ -84,11 +85,11 @@ export function PlayButton({ handlePlay, handleInstall, selectedInstanceImage, d
   const textToShow = displayName || selectedInstanceName;
 
   return (
-    <div className="flex items-stretch rounded-lg overflow-hidden transition-all select-none shadow-xl hover:shadow-2xl h-16">
+    <div className="flex items-stretch rounded-lg overflow-hidden transition-all select-none shadow-xl hover:shadow-2xl h-16 w-[320px]">
       
       {/* BOTÓN GRANDE */}
       <Button
-        className={`rounded-r-none h-full px-6 text-xl font-bold min-w-[280px] max-w-[280px] ${buttonClass} focus-visible:ring-0 focus-visible:ring-offset-0`}
+        className={`rounded-r-none h-full px-6 text-xl font-bold flex-1 min-w-0 ${buttonClass} focus-visible:ring-0 focus-visible:ring-offset-0`}
         disabled={isBusy && !isRunning}
         onClick={handleMainAction}
       >
@@ -97,24 +98,12 @@ export function PlayButton({ handlePlay, handleInstall, selectedInstanceImage, d
           
           {/* CASO 1: DESCARGANDO */}
           {isDownloading && (
-            <div className="w-full flex flex-col items-center justify-center gap-1 animate-in fade-in zoom-in-95 px-2">
-               <div className="flex items-center justify-between w-full text-xs font-bold tracking-wider text-white uppercase">
-                  <div className="flex items-center gap-2">
-                    <HardDriveDownload className="h-4 w-4 animate-pulse" /> 
-                    <span>{gameStatus === 'installing' ? 'INSTALANDO' : 'DESCARGANDO'}</span>
-                  </div>
-                  <span className="text-blue-300 font-mono bg-blue-900/50 px-1.5 rounded">{Math.round(downloadProgress)}%</span>
-               </div>
-               <div className="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
-                 <div 
-                    className="bg-blue-500 h-full transition-all duration-200 ease-linear shadow-[0_0_8px_#3b82f6]" 
-                    style={{ width: `${downloadProgress}%` }} 
-                 />
-               </div>
-               <span className="text-[10px] text-zinc-400 truncate w-full text-center mt-0.5 font-mono opacity-80">
-                 {gameStatusMessage || "Procesando..."}
-               </span>
-            </div>
+            <ProgressBar 
+                progress={downloadProgress}
+                label={gameStatus === 'installing' ? 'INSTALANDO' : 'DESCARGANDO'}
+                sublabel={gameStatusMessage || "Procesando..."}
+                color="bg-blue-500 text-blue-500"
+            />
           )}
 
           {/* CASO 2: LANZANDO */}
